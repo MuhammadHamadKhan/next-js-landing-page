@@ -1,0 +1,139 @@
+.body {
+    width: 100%;
+    min-width: 0;
+    text-align: center;
+}
+
+.section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(32px, 5vw, 64px) clamp(16px, 4vw, 48px);
+    /* Keeps the heading from hiding under the sticky header when "About" is clicked */
+    scroll-margin-top: 88px;
+}
+
+.grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: clamp(20px, 3vw, 32px);
+}
+
+/* ---------- Card: icon on top, text below, always centered ---------- */
+.card {
+    --accent: #7c3aed;
+    --accent-soft: #ede9fe;
+    --title-color: #1f2937;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-content: start;
+    row-gap: 12px;
+    padding: clamp(16px, 3vw, 24px) clamp(10px, 2vw, 16px);
+    text-align: center;
+    background: #fff;
+    border: 1px solid #efeaff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(76, 29, 149, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(76, 29, 149, 0.12);
+}
+
+/* Each tone only changes colors, the layout stays the same */
+.purple {
+    --accent: #7c3aed;
+    --accent-soft: #ede9fe;
+}
+
+.green {
+    --accent: #16a34a;
+    --accent-soft: #dcfce7;
+    --title-color: var(--accent);
+}
+
+.blue {
+    --accent: #2563eb;
+    --accent-soft: #dbeafe;
+    --title-color: var(--accent);
+}
+
+.pink {
+    --accent: #ec4899;
+    --accent-soft: #fce7f3;
+}
+
+/* ---------- Icon ---------- */
+.iconWrap {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: clamp(52px, 3vw + 28px, 68px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.iconWrap svg {
+    width: 52%;
+    height: 52%;
+}
+
+/* ---------- Text ---------- */
+.title {
+    font-weight: 600;
+    font-size: clamp(0.88rem, 0.82rem + 0.3vw, 1.05rem);
+    line-height: 1.3;
+    color: var(--title-color);
+}
+
+.description {
+    margin-top: 4px;
+    font-size: clamp(0.75rem, 0.72rem + 0.15vw, 0.875rem);
+    line-height: 1.55;
+    color: #6b7280;
+    text-wrap: balance;
+}
+
+/* ---------- Tablets: a bit more space ---------- */
+@media (min-width: 640px) {
+    .grid {
+        gap: 16px;
+    }
+}
+
+/* ---------- Desktop: 4 cards in one row ---------- */
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (min-width: 1536px) {
+    .section {
+        max-width: 1500px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .section {
+        max-width: 1760px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card {
+        transition: none;
+    }
+
+    .card:hover {
+        transform: none;
+    }
+}

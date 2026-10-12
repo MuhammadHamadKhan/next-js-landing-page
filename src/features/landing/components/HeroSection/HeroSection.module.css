@@ -1,0 +1,214 @@
+.hero {
+    background: linear-gradient(180deg, #ffffff 0%, #f3efff 100%);
+    overflow: hidden;
+}
+
+.inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 48px);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: center;
+}
+
+/* ---------- Text side ---------- */
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.title {
+    display: flex;
+    flex-direction: column;
+    font-weight: 800;
+    line-height: 1.05;
+    font-size: clamp(2.25rem, 1.4rem + 4.2vw, 4.5rem);
+}
+
+.line1 {
+    color: #111827;
+}
+
+.line2 {
+    color: #6d28d9;
+}
+
+.line3 {
+    color: #2563eb;
+}
+
+.text {
+    margin-top: clamp(14px, 2vw, 24px);
+    max-width: 460px;
+    font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.1rem);
+    line-height: 1.6;
+    color: #374151;
+}
+
+/* ---------- Buttons ---------- */
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: clamp(20px, 3vw, 32px);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.hostBtn {
+    color: #3b2a00;
+    background: linear-gradient(180deg, #fcd34d, #f5a800);
+    box-shadow: 0 6px 16px rgba(245, 168, 0, 0.35);
+}
+
+.joinBtn {
+    color: #fff;
+    background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+.practiceBtn {
+    color: #6d28d9;
+    background: #fff;
+    border: 1.5px solid #a78bfa;
+}
+
+/* ---------- Rating ---------- */
+.proof {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: clamp(20px, 3vw, 32px);
+}
+
+.avatars {
+    display: flex;
+}
+
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-left: -10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+.avatar:first-child {
+    margin-left: 0;
+}
+
+.stars {
+    display: flex;
+    gap: 2px;
+    color: #f5a800;
+}
+
+.rating {
+    margin-top: 2px;
+    font-size: 0.8rem;
+    color: #4b5563;
+}
+
+/* ---------- Image side ---------- */
+/* The box keeps a fixed shape, so any image fits inside without breaking the layout */
+.imageWrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 6 / 5;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #ede9fe;
+}
+
+.image {
+    object-fit: cover;
+    object-position: center;
+}
+
+/* ---------- Phones (480px and up) ---------- */
+@media (min-width: 480px) {
+    .buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .hostBtn,
+    .joinBtn {
+        flex: 1 1 160px;
+    }
+
+    .practiceBtn {
+        flex: 0 0 auto;
+    }
+}
+
+/* ---------- Tablets (768px and up) ---------- */
+@media (min-width: 768px) {
+    .imageWrap {
+        max-width: 720px;
+        margin: 0 auto;
+    }
+}
+
+/* ---------- Desktop (1024px and up) ---------- */
+@media (min-width: 1024px) {
+    .inner {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .imageWrap {
+        max-width: none;
+        margin: 0;
+    }
+
+    .buttons {
+        width: auto;
+    }
+
+    .hostBtn,
+    .joinBtn {
+        flex: 0 0 auto;
+    }
+}
+
+/* ---------- Large screens ---------- */
+@media (min-width: 1536px) {
+    .inner {
+        max-width: 1500px;
+    }
+
+    .text {
+        max-width: 520px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .inner {
+        max-width: 1760px;
+    }
+}
