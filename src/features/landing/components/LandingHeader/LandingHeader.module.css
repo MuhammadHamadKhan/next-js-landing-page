@@ -164,27 +164,79 @@
 }
 
 /* ---------- Mobile panel ---------- */
-.panel {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    max-height: calc(100vh - 100%);
-    overflow-y: auto;
-    padding: 16px clamp(16px, 4vw, 48px) 24px;
-    background: #fff;
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: 0 16px 32px rgba(76, 29, 149, 0.1);
+/* ---------- Side drawer (phones and tablets) ---------- */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(17, 12, 46, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
 }
 
-.panelOpen {
-    display: block;
+.overlayOpen {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0s linear 0s;
+}
+
+.drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 70;
+    width: min(86vw, 340px);
+    display: flex;
+    flex-direction: column;
+    padding: 16px 20px max(24px, env(safe-area-inset-bottom));
+    background: #fff;
+    box-shadow: -16px 0 40px rgba(76, 29, 149, 0.18);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.drawerOpen {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.3s ease, visibility 0s linear 0s;
+}
+
+.drawerTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f1f5;
+}
+
+.drawerTitle {
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-purple);
+}
+
+.closeBtn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    color: var(--color-purple);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
 }
 
 .panelNav {
     display: flex;
     flex-direction: column;
+    margin-top: 8px;
 }
 
 .panelLink {
@@ -192,13 +244,24 @@
     font-weight: 500;
     font-size: 1.05rem;
     border-bottom: 1px solid #f1f1f5;
+    transition: color 0.2s ease;
 }
 
+.panelLink:hover {
+    color: var(--color-blue);
+}
+
+/* Buttons sit at the bottom of the drawer */
 .panelActions {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-top: 20px;
+    margin-top: auto;
+    padding-top: 24px;
+}
+
+.panelActions>* {
+    width: 100%;
 }
 
 /* ---------- Small tablets ---------- */
@@ -227,7 +290,8 @@
     }
 
     .menuBtn,
-    .panel {
+    .overlay,
+    .drawer {
         display: none;
     }
 }
@@ -246,5 +310,13 @@
 @media (min-width: 1920px) {
     .inner {
         max-width: 1760px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .overlay,
+    .drawer {
+        transition: none;
     }
 }

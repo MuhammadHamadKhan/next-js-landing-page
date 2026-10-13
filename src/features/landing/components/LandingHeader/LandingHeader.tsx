@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./LandingHeader.module.css";
 
 interface NavItem {
@@ -33,22 +33,36 @@ const CrownIcon = () => (
 );
 
 const StarIcon = () => (
+    <svg className={styles.logoStar} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2l3 6.9 7.5.7-5.7 5 1.7 7.4L12 18l-6.5 4 1.7-7.4-5.7-5 7.5-.7L12 2z" />
+    </svg>
+);
+
+const CloseIcon = () => (
     <svg
-        className={styles.logoStar}
         viewBox="0 0 24 24"
-        fill="currentColor"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
         aria-hidden="true"
     >
-        <path d="M12 2l3 6.9 7.5.7-5.7 5 1.7 7.4L12 18l-6.5 4 1.7-7.4-5.7-5 7.5-.7L12 2z" />
+        <path d="M6 6l12 12M18 6L6 18" />
     </svg>
 );
 
 export const LandingHeader = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const menuBtnRef = useRef<HTMLButtonElement>(null);
+    const closeBtnRef = useRef<HTMLButtonElement>(null);
+    const wasOpen = useRef<boolean>(false);
 
-    const closeMenu = () => setIsOpen(false);
-    const toggleMenu = () => setIsOpen((prev) => !prev);
+    const closeMenu = useCallback(() => setIsOpen(false), []);
+    const openMenu = useCallback(() => setIsOpen(true), []);
 
+    // Close with the Escape key, or when the screen grows to desktop size
     useEffect(() => {
         const handleKey = (event: KeyboardEvent) => {
             if (event.key === "Escape") setIsOpen(false);
@@ -65,6 +79,7 @@ export const LandingHeader = () => {
         };
     }, []);
 
+    // Stop the page behind from scrolling while the drawer is open
     useEffect(() => {
         document.body.style.overflow = isOpen ? "hidden" : "";
         return () => {
@@ -72,60 +87,96 @@ export const LandingHeader = () => {
         };
     }, [isOpen]);
 
+    // Keyboard users: focus moves into the drawer, then back to the menu button
+    useEffect(() => {
+        if (isOpen) {
+            closeBtnRef.current?.focus();
+        } else if (wasOpen.current) {
+            menuBtnRef.current?.focus();
+        }
+        wasOpen.current = isOpen;
+    }, [isOpen]);
+
     return (
-        <header className={styles.header}>
-            <div className={styles.inner}>
-                <Link href="/" className={styles.logo} aria-label="GVON-G Categories home">
-                    <span className={styles.logoMain}>
-                        <span className={styles.logoPurple}>
-                            GV
-                            <span className={styles.logoO}>
-                                O
-                                <StarIcon />
+        <>
+            <header className={styles.header}>
+                <div className={styles.inner}>
+                    <Link href="/" className={styles.logo} aria-label="GVON-G Categories home">
+                        <span className={styles.logoMain}>
+                            <span className={styles.logoPurple}>
+                                GV
+                                <span className={styles.logoO}>
+                                    O
+                                    <StarIcon />
+                                </span>
+                                N
                             </span>
-                            N
+                            <span className={styles.logoBlue}>-G</span>
                         </span>
-                        <span className={styles.logoBlue}>-G</span>
-                    </span>
-                    <span className={styles.logoSub}>CATEGORIES</span>
-                </Link>
+                        <span className={styles.logoSub}>CATEGORIES</span>
+                    </Link>
 
-                <nav className={styles.nav} aria-label="Main navigation">
-                    {NAV_ITEMS.map((item) => (
-                        <Link key={item.label} href={item.href} className={styles.navLink}>
-                            {item.label}
+                    <nav className={styles.nav} aria-label="Main navigation">
+                        {NAV_ITEMS.map((item) => (
+                            <Link key={item.label} href={item.href} className={styles.navLink}>
+                                {item.label}
+                            </Link>
+                        ))}
+                    </nav>
+
+                    <div className={styles.actions}>
+                        <Link href="/login" className={styles.loginBtn}>
+                            Login
                         </Link>
-                    ))}
-                </nav>
+                        <Link href="/host" className={styles.hostBtn}>
+                            <CrownIcon />
+                            HOST A GAME
+                        </Link>
+                    </div>
 
-                <div className={styles.actions}>
-                    <Link href="/login" className={styles.loginBtn}>
-                        Login
-                    </Link>
-                    <Link href="/host" className={styles.hostBtn}>
-                        <CrownIcon />
-                        HOST A GAME
-                    </Link>
+                    <button
+                        ref={menuBtnRef}
+                        type="button"
+                        className={styles.menuBtn}
+                        onClick={openMenu}
+                        aria-expanded={isOpen}
+                        aria-controls="mobile-menu"
+                        aria-label="Open menu"
+                    >
+                        <span className={styles.bar} />
+                        <span className={styles.bar} />
+                        <span className={styles.bar} />
+                    </button>
+                </div>
+            </header>
+
+            {/* Placed outside the header on purpose, so it can cover the whole screen */}
+            <div
+                className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ""}`}
+                onClick={closeMenu}
+                aria-hidden="true"
+            />
+
+            <aside
+                id="mobile-menu"
+                className={`${styles.drawer} ${isOpen ? styles.drawerOpen : ""}`}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Main menu"
+            >
+                <div className={styles.drawerTop}>
+                    <span className={styles.drawerTitle}>Menu</span>
+                    <button
+                        ref={closeBtnRef}
+                        type="button"
+                        className={styles.closeBtn}
+                        onClick={closeMenu}
+                        aria-label="Close menu"
+                    >
+                        <CloseIcon />
+                    </button>
                 </div>
 
-                <button
-                    type="button"
-                    className={styles.menuBtn}
-                    onClick={toggleMenu}
-                    aria-expanded={isOpen}
-                    aria-controls="mobile-menu"
-                    aria-label={isOpen ? "Close menu" : "Open menu"}
-                >
-                    <span className={`${styles.bar} ${isOpen ? styles.barTop : ""}`} />
-                    <span className={`${styles.bar} ${isOpen ? styles.barMid : ""}`} />
-                    <span className={`${styles.bar} ${isOpen ? styles.barBottom : ""}`} />
-                </button>
-            </div>
-
-            <div
-                id="mobile-menu"
-                className={`${styles.panel} ${isOpen ? styles.panelOpen : ""}`}
-            >
                 <nav className={styles.panelNav} aria-label="Mobile navigation">
                     {NAV_ITEMS.map((item) => (
                         <Link
@@ -138,6 +189,7 @@ export const LandingHeader = () => {
                         </Link>
                     ))}
                 </nav>
+
                 <div className={styles.panelActions}>
                     <Link href="/login" className={styles.loginBtn} onClick={closeMenu}>
                         Login
@@ -147,7 +199,7 @@ export const LandingHeader = () => {
                         HOST A GAME
                     </Link>
                 </div>
-            </div>
-        </header>
+            </aside>
+        </>
     );
 };
