@@ -1,16 +1,19 @@
 .hero {
-    background: linear-gradient(180deg, #ffffff 0%, #f3efff 100%);
+    position: relative;
+    width: 100%;
     overflow: hidden;
+    background: linear-gradient(180deg, #ffffff 0%, #f3efff 100%);
 }
 
+/* ---------- Container: same width and side padding as the other sections ---------- */
 .inner {
+    width: 100%;
     max-width: 1280px;
     margin: 0 auto;
     padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 48px);
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: clamp(24px, 4vw, 48px);
-    align-items: center;
 }
 
 /* ---------- Text side ---------- */
@@ -18,6 +21,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    width: 100%;
 }
 
 .title {
@@ -57,6 +61,13 @@
     margin-top: clamp(20px, 3vw, 32px);
 }
 
+.actionRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -66,6 +77,7 @@
     font-weight: 700;
     font-size: 0.9rem;
     letter-spacing: 0.02em;
+    text-decoration: none;
     border-radius: 12px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -87,9 +99,16 @@
 }
 
 .practiceBtn {
+    width: 100%;
     color: #6d28d9;
     background: #fff;
     border: 1.5px solid #a78bfa;
+}
+
+.practiceBtn:hover {
+    background: #fbf9ff;
+    border-color: #8b5cf6;
+    box-shadow: 0 4px 14px rgba(109, 40, 217, 0.12);
 }
 
 /* ---------- Rating ---------- */
@@ -135,50 +154,49 @@
 }
 
 /* ---------- Image side ---------- */
-/* The box keeps a fixed shape, so any image fits inside without breaking the layout */
+/* The box always keeps the picture's own shape, so it scales with the column and never crops */
 .imageWrap {
     position: relative;
     width: 100%;
-    aspect-ratio: 6 / 5;
-    border-radius: 24px;
-    overflow: hidden;
-    background: #ede9fe;
+    aspect-ratio: 636 / 360;
 }
 
 .image {
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
 }
 
-/* ---------- Phones (480px and up) ---------- */
+/* ---------- Phones, wider (480px and up) ---------- */
 @media (min-width: 480px) {
-    .buttons {
-        flex-direction: row;
-        flex-wrap: wrap;
+    .actionRow {
+        width: auto;
     }
 
     .hostBtn,
     .joinBtn {
-        flex: 1 1 160px;
+        flex: 0 0 auto;
     }
 
     .practiceBtn {
-        flex: 0 0 auto;
+        width: fit-content;
     }
 }
 
-/* ---------- Tablets (768px and up) ---------- */
+/* ---------- Tablets (768px and up): image centered under the text ---------- */
 @media (min-width: 768px) {
     .imageWrap {
-        max-width: 720px;
+        max-width: 680px;
         margin: 0 auto;
     }
 }
 
-/* ---------- Desktop (1024px and up) ---------- */
+/* ---------- Desktop (1024px and up): text left, image right ---------- */
 @media (min-width: 1024px) {
     .inner {
-        grid-template-columns: 1fr 1fr;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        align-items: center;
+        gap: clamp(24px, 3vw, 56px);
     }
 
     .imageWrap {
@@ -189,14 +207,9 @@
     .buttons {
         width: auto;
     }
-
-    .hostBtn,
-    .joinBtn {
-        flex: 0 0 auto;
-    }
 }
 
-/* ---------- Large screens ---------- */
+/* ---------- Large screens (1536px and up) ---------- */
 @media (min-width: 1536px) {
     .inner {
         max-width: 1500px;
@@ -207,6 +220,7 @@
     }
 }
 
+/* ---------- Ultra-wide (1920px and up) ---------- */
 @media (min-width: 1920px) {
     .inner {
         max-width: 1760px;

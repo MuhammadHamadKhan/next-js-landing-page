@@ -9,7 +9,7 @@ import styles from "./HeroSection.module.css";
   Nothing else needs to change.
 */
 const HERO_IMAGE = {
-    src: "/images/hero-placeholder.svg",
+    src: "/hero-with-boy.png",
     alt: "Friends playing the GVON-G categories game together",
 };
 
@@ -68,14 +68,16 @@ export const HeroSection = () => {
                     </p>
 
                     <div className={styles.buttons}>
-                        <Link href="/host" className={`${styles.btn} ${styles.hostBtn}`}>
-                            <CrownIcon />
-                            HOST A GAME
-                        </Link>
-                        <Link href="/join" className={`${styles.btn} ${styles.joinBtn}`}>
-                            <UsersIcon />
-                            JOIN A GAME
-                        </Link>
+                        <div className={styles.actionRow}>
+                            <Link href="/host" className={`${styles.btn} ${styles.hostBtn}`}>
+                                <CrownIcon />
+                                HOST A GAME
+                            </Link>
+                            <Link href="/join" className={`${styles.btn} ${styles.joinBtn}`}>
+                                <UsersIcon />
+                                JOIN A GAME
+                            </Link>
+                        </div>
                         <Link href="/practice" className={`${styles.btn} ${styles.practiceBtn}`}>
                             <BoltIcon />
                             PRACTICE FOR FREE

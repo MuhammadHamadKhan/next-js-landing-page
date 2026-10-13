@@ -1,0 +1,198 @@
+.section {
+    padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 48px);
+}
+
+.banner {
+    --unit: clamp(0.8px, 0.08vw + 0.4px, 1.2px);
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-items: center;
+    gap: 8px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(24px, 3.5vw, 44px) clamp(20px, 4vw, 56px);
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: clamp(14px, 1.6vw, 20px);
+    background:
+        radial-gradient(ellipse at 88% 50%, rgba(216, 180, 254, 0.55), transparent 48%),
+        radial-gradient(ellipse at 10% 0%, rgba(96, 165, 250, 0.35), transparent 50%),
+        linear-gradient(105deg, #3b1fb8 0%, #5b2bd0 40%, #3b4fe0 75%, #2f6bf0 100%);
+    box-shadow:
+        0 20px 48px rgba(76, 29, 149, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+
+.banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(circle, rgba(255, 255, 255, 0.12) 1px, transparent 1.5px) 0 0 / 22px 22px;
+    mask-image: linear-gradient(90deg, transparent, #000 40%, transparent);
+    opacity: 0.6;
+}
+
+.confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.piece {
+    position: absolute;
+    display: block;
+    border-radius: 1px;
+    opacity: 0.9;
+}
+
+.round {
+    border-radius: 50%;
+}
+
+.content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+}
+
+.subtitle {
+    margin-top: 6px;
+    font-size: clamp(0.9rem, 0.8rem + 0.5vw, 1.15rem);
+
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(100%, 320px);
+    margin-top: clamp(16px, 2vw, 24px);
+}
+
+.button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px clamp(22px, 2.6vw, 34px);
+    overflow: hidden;
+    border-radius: 12px;
+    font-size: clamp(0.8rem, 0.75rem + 0.25vw, 0.95rem);
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+.gold {
+    background: linear-gradient(180deg, var(--color-gold-light), var(--color-gold-dark));
+    color: var(--color-gold-text);
+    box-shadow:
+        0 8px 18px rgba(245, 168, 0, 0.45),
+        inset 0 -2px 0 rgba(180, 100, 0, 0.35);
+}
+
+.blue {
+    background: linear-gradient(180deg, #4f8ff7, #1d4ed8);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow:
+        0 8px 18px rgba(29, 78, 216, 0.5),
+        inset 0 -2px 0 rgba(15, 40, 140, 0.4);
+}
+
+.button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+
+
+.button::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 50% 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0));
+    pointer-events: none;
+}
+
+.art {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    height: clamp(120px, 28vw, 150px);
+    margin-top: 4px;
+}
+
+.title {
+    font-size: clamp(1.4rem, 1rem + 2vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.2px;
+    text-shadow: 0 2px 10px rgba(30, 10, 90, 0.4);
+}
+
+.trophy {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: translateX(8%) rotate(12deg);
+    transform-origin: 50% 90%;
+    filter: drop-shadow(0 14px 18px rgba(30, 10, 90, 0.45));
+}
+
+@media (min-width: 480px) {
+    .actions {
+        flex-direction: row;
+        justify-content: center;
+        width: auto;
+    }
+}
+
+@media (min-width: 640px) {
+    .banner {
+        grid-template-columns: minmax(0, 1fr) clamp(130px, 22%, 300px);
+        justify-items: stretch;
+        gap: clamp(8px, 2vw, 24px);
+    }
+
+    .art {
+        height: clamp(120px, 15vw, 210px);
+        margin-top: 0;
+        justify-self: center;
+    }
+}
+
+@media (min-width: 1536px) {
+    .banner {
+        max-width: 1500px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .banner {
+        max-width: 1760px;
+    }
+}
