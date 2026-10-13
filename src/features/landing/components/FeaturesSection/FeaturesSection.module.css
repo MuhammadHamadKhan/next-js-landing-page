@@ -43,7 +43,7 @@
     border: 1px solid #efeaff;
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(76, 29, 149, 0.06);
-    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+    transition: translate 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* The lift itself is animated by StaggerItem (whileHover) */
@@ -145,7 +145,7 @@
    who ask for reduced motion. The !important rules are a safety net so the
    card is never left hidden while the page is still hydrating. */
 @media (prefers-reduced-motion: reduce),
-    (max-width: 767px) {
+(max-width: 767px) {
     .card {
         transition: none;
         opacity: 1 !important;
@@ -158,5 +158,15 @@
 
     .card:hover .iconWrap {
         transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card {
+        transition: none;
+    }
+
+    .card:hover {
+        translate: none;
     }
 }

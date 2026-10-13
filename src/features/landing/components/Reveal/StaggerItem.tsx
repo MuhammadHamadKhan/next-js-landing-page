@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { motion, type Variants } from "motion/react";
 import { EASE_OUT } from "./motion";
 import { useScrollDirection } from "./ScrollDirectionProvider";
@@ -11,7 +11,7 @@ interface StaggerItemProps {
     children: ReactNode;
     className?: string;
     delay?: number;
-    /* How many pixels the card rises when hovered */
+    /* How many pixels the card rises when hovered (handled in CSS) */
     lift?: number;
     /* How far the card travels when it first appears */
     distance?: number;
@@ -23,7 +23,6 @@ interface StaggerCustom {
     distance: number;
 }
 
-/* Scrolling down: cards rise from below. Scrolling up: they drop from above. */
 const startOffset = ({ direction, distance }: StaggerCustom) =>
     direction > 0 ? distance : -distance;
 
@@ -44,26 +43,32 @@ export const StaggerItem = ({
     children,
     className,
     delay = 0,
-    lift = 0,
+    lift = 6,
     distance = 28,
 }: StaggerItemProps) => {
     const staticMotion = useStaticMotion();
     const scrollDirection = useScrollDirection();
     const [ref, inView, enterDirection] = useEnterView<HTMLDivElement>(scrollDirection);
 
+    const style = { "--lift": `${lift}px` } as CSSProperties;
+
     if (staticMotion) {
-        return <div className={className}>{children}</div>;
+        return (
+            <div className={className} style={style}>
+                {children}
+            </div>
+        );
     }
 
     return (
         <motion.div
             ref={ref}
             className={className}
+            style={style}
             variants={variants}
             custom={{ direction: enterDirection, delay, distance }}
             initial="hidden"
             animate={inView ? "show" : "hidden"}
-            whileHover={lift ? { y: -lift, transition: { duration: 0.25 } } : undefined}
         >
             {children}
         </motion.div>
