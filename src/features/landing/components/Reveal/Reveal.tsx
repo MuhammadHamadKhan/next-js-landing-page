@@ -1,53 +1,59 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { motion } from "motion/react";
-import { EASE_OUT, REVEAL_DURATION } from "./motion";
+import { motion, type Variants } from "motion/react";
+import { EASE_OUT } from "./motion";
 import { useScrollDirection } from "./ScrollDirectionProvider";
+import { useEnterView } from "./UseEnterView";
 import { useStaticMotion } from "./useStaticMotion";
 
 interface RevealProps {
     children: ReactNode;
-    /** Delay in seconds, for sequencing siblings */
-    delay?: number;
-    /** How far away it starts, in px */
-    distance?: number;
     className?: string;
+    delay?: number;
+    distance?: number;
 }
 
-/**
- * Scroll-triggered reveal that plays every time the element enters the
- * viewport, following the direction of the scroll:
- *
- * - scrolling down: enters from the left
- * - scrolling up: enters from the right
- *
- * The travel distance is declared as keyframes on whileInView (not on
- * initial), so the reveal always starts from the current scroll direction,
- * even when the direction flipped while the element was off screen.
- */
-export const Reveal = ({
-    children,
-    delay = 0,
-    distance = 28,
-    className,
-}: RevealProps) => {
-    const reduceMotion = useStaticMotion();
-    const direction = useScrollDirection();
+interface RevealCustom {
+    direction: number;
+    delay: number;
+    distance: number;
+}
 
-    if (reduceMotion) {
+/* Scrolling down: content rises from below. Scrolling up: it drops from above. */
+const startOffset = ({ direction, distance }: RevealCustom) =>
+    direction > 0 ? distance : -distance;
+
+const variants: Variants = {
+    hidden: (custom: RevealCustom) => ({
+        opacity: 0,
+        y: startOffset(custom),
+        transition: { duration: 0 },
+    }),
+    show: (custom: RevealCustom) => ({
+        opacity: [0, 1],
+        y: [startOffset(custom), 0],
+        transition: { duration: 0.7, delay: custom.delay, ease: EASE_OUT },
+    }),
+};
+
+export const Reveal = ({ children, className, delay = 0, distance = 24 }: RevealProps) => {
+    const staticMotion = useStaticMotion();
+    const scrollDirection = useScrollDirection();
+    const [ref, inView, enterDirection] = useEnterView<HTMLDivElement>(scrollDirection);
+
+    if (staticMotion) {
         return <div className={className}>{children}</div>;
     }
 
-    const fromX = direction > 0 ? -distance : distance;
-
     return (
         <motion.div
+            ref={ref}
             className={className}
-            initial={{ opacity: 0, x: fromX }}
-            whileInView={{ opacity: [0, 1], x: [fromX, 0] }}
-            viewport={{ once: false, margin: "-60px" }}
-            transition={{ duration: REVEAL_DURATION, delay, ease: EASE_OUT }}
+            variants={variants}
+            custom={{ direction: enterDirection, delay, distance }}
+            initial="hidden"
+            animate={inView ? "show" : "hidden"}
         >
             {children}
         </motion.div>

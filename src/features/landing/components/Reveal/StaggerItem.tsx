@@ -1,63 +1,69 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { motion } from "motion/react";
-import { EASE_OUT, REVEAL_DURATION } from "./motion";
+import { motion, type Variants } from "motion/react";
+import { EASE_OUT } from "./motion";
 import { useScrollDirection } from "./ScrollDirectionProvider";
+import { useEnterView } from "./UseEnterView";
 import { useStaticMotion } from "./useStaticMotion";
 
 interface StaggerItemProps {
     children: ReactNode;
     className?: string;
-    /** Delay in seconds before this item starts — pass index * 0.12 to cascade siblings */
     delay?: number;
-    /** Lift on hover, in px. Set to 0 to disable. */
+    /* How many pixels the card rises when hovered */
     lift?: number;
-    /** How far away it starts, in px */
+    /* How far the card travels when it first appears */
     distance?: number;
 }
 
-/**
- * Scroll-revealing item that plays every time it enters the viewport,
- * following the direction of the scroll:
- *
- * - scrolling down: enters from the left
- * - scrolling up: enters from the right
- *
- * Siblings are cascaded by passing an increasing `delay`, which produces the
- * left-to-right (or right-to-left) sweep across a row.
- *
- * The hover lift stays quick and separate, so pointing at a card feels
- * instant while the reveal keeps its unhurried pace.
- */
+interface StaggerCustom {
+    direction: number;
+    delay: number;
+    distance: number;
+}
+
+/* Scrolling down: cards rise from below. Scrolling up: they drop from above. */
+const startOffset = ({ direction, distance }: StaggerCustom) =>
+    direction > 0 ? distance : -distance;
+
+const variants: Variants = {
+    hidden: (custom: StaggerCustom) => ({
+        opacity: 0,
+        y: startOffset(custom),
+        transition: { duration: 0 },
+    }),
+    show: (custom: StaggerCustom) => ({
+        opacity: [0, 1],
+        y: [startOffset(custom), 0],
+        transition: { duration: 0.7, delay: custom.delay, ease: EASE_OUT },
+    }),
+};
+
 export const StaggerItem = ({
     children,
     className,
     delay = 0,
     lift = 0,
-    distance = 44,
+    distance = 28,
 }: StaggerItemProps) => {
-    const reduceMotion = useStaticMotion();
-    const direction = useScrollDirection();
+    const staticMotion = useStaticMotion();
+    const scrollDirection = useScrollDirection();
+    const [ref, inView, enterDirection] = useEnterView<HTMLDivElement>(scrollDirection);
 
-    if (reduceMotion) {
+    if (staticMotion) {
         return <div className={className}>{children}</div>;
     }
 
-    const fromX = direction > 0 ? -distance : distance;
-
     return (
         <motion.div
+            ref={ref}
             className={className}
-            initial={{ opacity: 0, x: fromX, scale: 0.97 }}
-            whileInView={{ opacity: [0, 1], x: [fromX, 0], scale: [0.97, 1] }}
-            viewport={{ once: false, margin: "-60px" }}
-            transition={{ duration: REVEAL_DURATION, delay, ease: EASE_OUT }}
-            whileHover={
-                lift
-                    ? { y: -lift, transition: { duration: 0.32, ease: EASE_OUT } }
-                    : undefined
-            }
+            variants={variants}
+            custom={{ direction: enterDirection, delay, distance }}
+            initial="hidden"
+            animate={inView ? "show" : "hidden"}
+            whileHover={lift ? { y: -lift, transition: { duration: 0.25 } } : undefined}
         >
             {children}
         </motion.div>
