@@ -13,17 +13,23 @@
     margin-top: clamp(20px, 3vw, 32px);
 }
 
-/* ---------- The scrolling row ---------- */
+/* ---------- The natively scrollable row (hand / swipe / touch / wheel) ---------- */
 .track {
     list-style: none;
     display: flex;
     gap: var(--gap);
+    padding: 0;
+    margin: 0;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 4px;
     scrollbar-width: none;
+    -ms-overflow-style: none;
+    cursor: grab;
+}
+
+.track:active {
+    cursor: grabbing;
 }
 
 .track::-webkit-scrollbar {
@@ -39,7 +45,7 @@
 /* ---------- Card ---------- */
 .card {
     position: relative;
-    flex: 0 0 62%;
+    flex: 0 0 68%;
     aspect-ratio: 5 / 4;
     display: flex;
     align-items: flex-end;
@@ -48,7 +54,10 @@
     border-radius: 14px;
     background: linear-gradient(135deg, var(--from), var(--to));
     box-shadow: 0 6px 16px rgba(30, 20, 80, 0.18);
+    flex-shrink: 0;
     scroll-snap-align: start;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Dark fade at the bottom so the name is easy to read on any image */
@@ -62,6 +71,8 @@
 
 .image {
     object-fit: cover;
+    pointer-events: none;
+    -webkit-user-drag: none;
 }
 
 .emoji {
@@ -83,33 +94,36 @@
     text-transform: uppercase;
     color: #fff;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
 }
 
-/* ---------- Arrows (hidden on phones, where you swipe instead) ---------- */
+/* ---------- Arrows: HIDDEN ON MOBILE (swipe with hands), VISIBLE ON TABLET & DESKTOP ---------- */
 .arrow {
-    display: none;
+    display: none; /* hidden on mobile */
     position: absolute;
     top: 50%;
-    z-index: 2;
-    width: 40px;
-    height: 40px;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
     place-items: center;
     color: var(--color-purple, #4c1d95);
     background: #fff;
     border: 1px solid #ddd6fe;
     border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(76, 29, 149, 0.15);
+    box-shadow: 0 4px 14px rgba(76, 29, 149, 0.18);
     transform: translateY(-50%);
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-.arrow:hover:not(:disabled) {
+.arrow:hover {
     transform: translateY(-50%) scale(1.08);
+    background: #fbf9ff;
+    box-shadow: 0 6px 18px rgba(76, 29, 149, 0.25);
 }
 
-.arrow:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
+.arrow:active {
+    transform: translateY(-50%) scale(0.95);
 }
 
 .arrow:focus-visible {
@@ -118,11 +132,11 @@
 }
 
 .arrowPrev {
-    left: 0;
+    left: -12px;
 }
 
 .arrowNext {
-    right: 0;
+    right: -12px;
 }
 
 /* ---------- Dots ---------- */
@@ -130,22 +144,25 @@
     display: flex;
     justify-content: center;
     gap: 8px;
-    margin-top: 16px;
+    margin-top: 20px;
 }
 
 .dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     padding: 0;
     background: #d1d5db;
     border: 0;
     border-radius: 50%;
-    transition: background 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.25s ease, width 0.25s ease;
 }
 
 .dotActive {
+    width: 24px;
+    border-radius: 5px;
     background: var(--color-purple, #4c1d95);
-    transform: scale(1.25);
+    transform: scale(1.05);
 }
 
 /* ---------- Tablets: 3 cards visible, arrows appear ---------- */
@@ -157,11 +174,19 @@
 
 @media (min-width: 768px) {
     .stage {
-        padding-inline: 24px;
+        padding-inline: 12px;
     }
 
     .arrow {
-        display: grid;
+        display: grid; /* arrows appear on tablets and desktops */
+    }
+
+    .arrowPrev {
+        left: -16px;
+    }
+
+    .arrowNext {
+        right: -16px;
     }
 }
 
@@ -173,6 +198,14 @@
 
     .card {
         flex-basis: calc((100% - 4 * var(--gap)) / 5);
+    }
+
+    .arrowPrev {
+        left: -20px;
+    }
+
+    .arrowNext {
+        right: -20px;
     }
 }
 
@@ -189,10 +222,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .track {
-        scroll-behavior: auto;
-    }
-
     .arrow,
     .dot {
         transition: none;

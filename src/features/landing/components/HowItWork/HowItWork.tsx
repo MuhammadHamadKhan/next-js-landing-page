@@ -20,6 +20,7 @@ const STEPS: Step[] = [
         description: "Host a game or join using a game code.",
         tone: "purple",
         emoji: "👨‍👩‍👧",
+        image: "/img.jpeg"
     },
     {
         id: 2,

@@ -9,23 +9,10 @@ import styles from "./HeroSection.module.css";
   Nothing else needs to change.
 */
 const HERO_IMAGE = {
-    src: "/hero-with-boy.png",
+    src: "/hero-bg.jpeg",
     alt: "Friends playing the GVON-G categories game together",
 };
 
-interface Player {
-    initials: string;
-    color: string;
-}
-
-// Replace these with real photos later if you want
-const PLAYERS: Player[] = [
-    { initials: "A", color: "#f59e0b" },
-    { initials: "S", color: "#ec4899" },
-    { initials: "J", color: "#10b981" },
-    { initials: "M", color: "#3b82f6" },
-    { initials: "T", color: "#8b5cf6" },
-];
 
 const CrownIcon = () => (
     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
@@ -54,70 +41,67 @@ const StarIcon = () => (
 export const HeroSection = () => {
     return (
         <section className={styles.hero}>
-            <div className={styles.inner}>
-                <div className={styles.content}>
-                    <h1 className={styles.title}>
-                        <span className={styles.line1}>Think Fast.</span>
-                        <span className={styles.line2}>Learn Faster.</span>
-                        <span className={styles.line3}>Play Together.</span>
-                    </h1>
+            <div className={styles.stage}>
+                <div className={styles.inner}>
+                    <div className={styles.content}>
+                        <h1 className={styles.title}>
+                            <span className={styles.line1}>Think Fast.</span>
+                            <span className={styles.line2}>Learn Faster.</span>
+                            <span className={styles.line3}>Play Together.</span>
+                        </h1>
 
-                    <p className={styles.text}>
-                        Challenge your friends, family, colleagues and communities with the
-                        most exciting AI-assisted categories game ever created.
-                    </p>
+                        <p className={styles.text}>
+                            Challenge your friends, family, colleagues and communities with the
+                            most exciting AI-assisted categories game ever created.
+                        </p>
 
-                    <div className={styles.buttons}>
-                        <div className={styles.actionRow}>
-                            <Link href="/host" className={`${styles.btn} ${styles.hostBtn}`}>
-                                <CrownIcon />
-                                HOST A GAME
-                            </Link>
-                            <Link href="/join" className={`${styles.btn} ${styles.joinBtn}`}>
-                                <UsersIcon />
-                                JOIN A GAME
-                            </Link>
-                        </div>
-                        <Link href="/practice" className={`${styles.btn} ${styles.practiceBtn}`}>
-                            <BoltIcon />
-                            PRACTICE FOR FREE
-                        </Link>
-                    </div>
-
-                    <div className={styles.proof}>
-                        <div className={styles.avatars} aria-hidden="true">
-                            {PLAYERS.map((player, index) => (
-                                <span
-                                    key={player.initials}
-                                    className={styles.avatar}
-                                    style={{
-                                        backgroundColor: player.color,
-                                        animationDelay: `${0.85 + index * 0.12}s`,
-                                    }}
-                                >
-                                    {player.initials}
-                                </span>
-                            ))}
-                        </div>
-                        <div>
-                            <div className={styles.stars} aria-label="Rated 4.9 out of 5">
-                                {[1, 2, 3, 4, 5].map((n) => (
-                                    <StarIcon key={n} />
-                                ))}
+                        <div className={styles.buttons}>
+                            <div className={styles.actionRow}>
+                                <Link href="/host" className={`${styles.btn} ${styles.hostBtn}`}>
+                                    <CrownIcon />
+                                    HOST A GAME
+                                </Link>
+                                <Link href="/join" className={`${styles.btn} ${styles.joinBtn}`}>
+                                    <UsersIcon />
+                                    JOIN A GAME
+                                </Link>
                             </div>
-                            <p className={styles.rating}>4.9/5 from 10,000+ Players</p>
+                            <Link href="/practice" className={`${styles.btn} ${styles.practiceBtn}`}>
+                                <BoltIcon />
+                                PRACTICE FOR FREE
+                            </Link>
+                        </div>
+
+                        <div className={styles.proof}>
+                            <div className={styles.avatars} aria-hidden="true">
+                                <Image
+                                    src="/avatars-group.png"
+                                    alt="GVON-G active players"
+                                    width={136}
+                                    height={42}
+                                    className={styles.avatarsImg}
+                                />
+                            </div>
+                            <div>
+                                <div className={styles.stars} aria-label="Rated 4.9 out of 5">
+                                    {[1, 2, 3, 4, 5].map((n) => (
+                                        <StarIcon key={n} />
+                                    ))}
+                                </div>
+                                <p className={styles.rating}>4.9/5 from 10,000+ Players</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className={styles.imageWrap}>
+                <div className={styles.bgWrap}>
                     <Image
                         src={HERO_IMAGE.src}
                         alt={HERO_IMAGE.alt}
                         fill
                         priority
-                        sizes="(max-width: 1024px) 100vw, 50vw"
-                        className={styles.image}
+                        sizes="100vw"
+                        className={styles.bg}
                     />
                 </div>
             </div>

@@ -1,19 +1,28 @@
 .hero {
-    position: relative;
     width: 100%;
     overflow: hidden;
-    background: linear-gradient(180deg, #ffffff 0%, #f3efff 100%);
+    background: #f6f6fe;
+}
+
+/* Same maximum width as the rest of the page. The image can never grow past this. */
+.stage {
+    position: relative;
+    width: 100%;
+    max-width: 1760px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    container-type: inline-size;
 }
 
 /* ---------- Container: same width and side padding as the other sections ---------- */
 .inner {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 1280px;
     margin: 0 auto;
-    padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 48px);
-    display: flex;
-    flex-direction: column;
-    gap: clamp(24px, 4vw, 48px);
+    padding: clamp(24px, 5vw, 56px) clamp(16px, 4vw, 48px) 0;
 }
 
 /* ---------- Text side ---------- */
@@ -34,17 +43,14 @@
 
 .line1 {
     color: #111827;
-    animation: heroFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.08s backwards;
 }
 
 .line2 {
     color: #6d28d9;
-    animation: heroFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.22s backwards;
 }
 
 .line3 {
     color: #2563eb;
-    animation: heroFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.36s backwards;
 }
 
 .text {
@@ -53,7 +59,6 @@
     font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.1rem);
     line-height: 1.6;
     color: #374151;
-    animation: heroFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s backwards;
 }
 
 /* ---------- Buttons ---------- */
@@ -63,7 +68,6 @@
     gap: 12px;
     width: 100%;
     margin-top: clamp(20px, 3vw, 32px);
-    animation: heroFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.62s backwards;
 }
 
 .actionRow {
@@ -122,31 +126,20 @@
     align-items: center;
     gap: 14px;
     margin-top: clamp(20px, 3vw, 32px);
-    animation: heroFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.74s backwards;
 }
 
 .avatars {
     display: flex;
-}
-
-.avatar {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    margin-left: -10px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #fff;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    /* Delay is set inline per avatar for the staggered pop-in */
-    animation: heroPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    flex-shrink: 0;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
 }
 
-.avatar:first-child {
-    margin-left: 0;
+.avatarsImg {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    display: block;
 }
 
 .stars {
@@ -161,22 +154,34 @@
     color: #4b5563;
 }
 
-/* ---------- Image side ---------- */
-/* The box always keeps the picture's own shape, so it scales with the column and never crops */
-.imageWrap {
+/* ---------- Image ---------- */
+/* Phones and tablets: the image sits under the text. It is cropped from the left,
+   so the pale empty area is cut and the artwork fills the width. */
+.bgWrap {
     position: relative;
     width: 100%;
-    aspect-ratio: 636 / 360;
-    animation: heroReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.25s backwards;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
 }
 
-.image {
-    object-fit: contain;
-    object-position: center;
+/* Zooming in a little from the bottom-right corner crops the top and the pale left side */
+.bg {
+    object-fit: cover;
+    object-position: right bottom;
+    transform: scale(1.12);
+    transform-origin: right bottom;
+}
+
+
+@media((min-width:320px) and (max-width:460px)) {
+    .rating {
+        display: none;
+    }
 }
 
 /* ---------- Phones, wider (480px and up) ---------- */
 @media (min-width: 480px) {
+
     .actionRow {
         width: auto;
     }
@@ -191,30 +196,56 @@
     }
 }
 
-/* ---------- Tablets (768px and up): image centered under the text ---------- */
-@media (min-width: 768px) {
-    .imageWrap {
-        max-width: 680px;
-        margin: 0 auto;
-    }
-}
-
-/* ---------- Desktop (1024px and up): text left, image right ---------- */
 @media (min-width: 1024px) {
     .inner {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-        align-items: center;
-        gap: clamp(24px, 3vw, 56px);
+        padding-inline: clamp(16px, 4vw, 48px);
     }
 
-    .imageWrap {
-        max-width: none;
-        margin: 0;
-        /* Gentle float only on desktop, after the reveal has finished */
-        animation:
-            heroReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.25s backwards,
-            heroFloat 7s ease-in-out 2s infinite;
+
+
+    .stage {
+        display: grid;
+        /* Image is 1600 x 908. Using 817 as the height cuts about 10% from the top */
+        aspect-ratio: 1600 / 817;
+    }
+
+    .bg {
+        object-position: right bottom;
+        transform: none;
+    }
+
+    .inner,
+    .bgWrap {
+        grid-area: 1 / 1;
+    }
+
+
+    /* Text starts near the top instead of the middle */
+    .inner {
+        align-self: start;
+        padding-top: clamp(28px, 6vw, 112px);
+        padding-bottom: 0;
+    }
+
+    .bgWrap {
+        z-index: 0;
+        aspect-ratio: auto;
+    }
+
+    /* Sizes follow the width of the hero itself (cqw), not the whole window,
+       so the text never reaches the kids when the window is very wide */
+    .content {
+        max-width: min(33vw, 700px);
+        max-width: min(33cqw, 700px);
+    }
+
+    .title {
+        font-size: clamp(2rem, 0.2rem + 3.6vw, 4rem);
+        font-size: clamp(2rem, 0.2rem + 3.6cqw, 4rem);
+    }
+
+    .text {
+        max-width: min(100%, 460px);
     }
 
     .buttons {
@@ -222,98 +253,23 @@
     }
 }
 
-/* ---------- Large screens (1536px and up) ---------- */
+/* ---------- Wider than the hero's maximum: soften the left and right edges ---------- */
+@media (min-width: 1761px) {
+    .bgWrap {
+        -webkit-mask-image: linear-gradient(to right, transparent 0, #000 3%, #000 97%, transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0, #000 3%, #000 97%, transparent 100%);
+    }
+}
+
+/* ---------- Large screens: same width as the header ---------- */
 @media (min-width: 1536px) {
     .inner {
         max-width: 1500px;
     }
-
-    .text {
-        max-width: 520px;
-    }
 }
 
-/* ---------- Ultra-wide (1920px and up) ---------- */
 @media (min-width: 1920px) {
     .inner {
         max-width: 1760px;
-    }
-}
-
-/* ---------- Entrance animations (one-time, on load) ----------
-   Transform + opacity only, so they stay on the GPU compositor.
-   fill-mode "backwards" hides an element only during its delay;
-   once finished, normal styles (incl. hover effects) apply again. */
-@keyframes heroFadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(28px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes heroReveal {
-    from {
-        opacity: 0;
-        transform: scale(0.96) translateY(16px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-@keyframes heroPop {
-    from {
-        opacity: 0;
-        transform: scale(0.4);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes heroFloat {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-/* ---------- Phones: faster, tighter entrance. No continuous motion,
-     nothing that can feel broken on small or low-power screens ---------- */
-@media (max-width: 767px) {
-    .line1,
-    .line2,
-    .line3,
-    .text,
-    .buttons,
-    .proof {
-        animation-duration: 0.75s;
-    }
-
-    .imageWrap {
-        animation-duration: 0.95s;
-    }
-}
-
-/* ---------- Accessibility: honor the reduced-motion preference ---------- */
-@media (prefers-reduced-motion: reduce) {
-    .line1,
-    .line2,
-    .line3,
-    .text,
-    .buttons,
-    .proof,
-    .avatar,
-    .imageWrap {
-        animation: none;
     }
 }
