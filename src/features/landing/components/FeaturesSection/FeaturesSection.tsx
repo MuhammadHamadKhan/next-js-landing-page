@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import { SectionHeading } from "@/features/landing/components/SectionHeading/SectionHeading";
+import { StaggerItem } from "@/features/landing/components/Reveal/StaggerItem";
 import { BrainIcon, HeartIcon, RocketIcon, UsersIcon } from "./FeatureIcons";
 import styles from "./FeaturesSection.module.css";
 
@@ -50,15 +51,21 @@ export const FeaturesSection = () => {
             <SectionHeading id="why-gvon-heading">Why GVON-G?</SectionHeading>
 
             <ul className={styles.grid}>
-                {FEATURES.map(({ id, title, description, tone, Icon }) => (
-                    <li key={id} className={`${styles.card} ${styles[tone]}`}>
-                        <span className={styles.iconWrap}>
-                            <Icon />
-                        </span>
-                        <div className={styles.body}>
-                            <h3 className={styles.title}>{title}</h3>
-                            <p className={styles.description}>{description}</p>
-                        </div>
+                {FEATURES.map(({ id, title, description, tone, Icon }, index) => (
+                    <li key={id} className={styles.cell}>
+                        <StaggerItem
+                            className={`${styles.card} ${styles[tone]}`}
+                            delay={index * 0.12}
+                            lift={6}
+                        >
+                            <span className={styles.iconWrap}>
+                                <Icon />
+                            </span>
+                            <div className={styles.body}>
+                                <h3 className={styles.title}>{title}</h3>
+                                <p className={styles.description}>{description}</p>
+                            </div>
+                        </StaggerItem>
                     </li>
                 ))}
             </ul>

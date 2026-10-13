@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Reveal } from "@/features/landing/components/Reveal/Reveal";
 import styles from "./TrustBar.module.css";
 
 interface Stat {
@@ -45,13 +46,18 @@ export const TrustBar = () => {
     return (
         <section className={styles.section} aria-label="GVON-G in numbers">
             <ul className={styles.card}>
-                {STATS.map((stat) => (
+                {STATS.map((stat, index) => (
                     <li key={stat.label} className={styles.item}>
-                        <span className={styles.icon}>{stat.icon}</span>
-                        <div className={styles.text}>
-                            <span className={styles.value}>{stat.value}</span>
-                            <span className={styles.label}>{stat.label}</span>
-                        </div>
+                        <Reveal
+                            className={styles.itemInner}
+                            delay={0.08 + index * 0.12}
+                        >
+                            <span className={styles.icon}>{stat.icon}</span>
+                            <div className={styles.text}>
+                                <span className={styles.value}>{stat.value}</span>
+                                <span className={styles.label}>{stat.label}</span>
+                            </div>
+                        </Reveal>
                     </li>
                 ))}
             </ul>

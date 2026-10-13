@@ -17,11 +17,16 @@
     box-shadow: 0 10px 30px rgba(76, 29, 149, 0.1);
 }
 
+/* Grid cell only — the flex layout lives in .itemInner so Reveal can animate it */
 .item {
+}
+
+.itemInner {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
+    width: 100%;
 }
 
 /* On phones, the last (5th) item sits in the middle of its own row */
@@ -130,5 +135,16 @@
 @media (min-width: 1920px) {
     .section {
         max-width: 1760px;
+    }
+}
+
+/* No scroll animation on phones (see useStaticMotion), and none for visitors
+   who ask for reduced motion. The !important rules are a safety net so a stat
+   is never left hidden while the page is still hydrating. */
+@media (prefers-reduced-motion: reduce),
+    (max-width: 767px) {
+    .itemInner {
+        opacity: 1 !important;
+        transform: none !important;
     }
 }

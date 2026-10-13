@@ -86,11 +86,14 @@ export const HeroSection = () => {
 
                     <div className={styles.proof}>
                         <div className={styles.avatars} aria-hidden="true">
-                            {PLAYERS.map((player) => (
+                            {PLAYERS.map((player, index) => (
                                 <span
                                     key={player.initials}
                                     className={styles.avatar}
-                                    style={{ backgroundColor: player.color }}
+                                    style={{
+                                        backgroundColor: player.color,
+                                        animationDelay: `${0.85 + index * 0.12}s`,
+                                    }}
                                 >
                                     {player.initials}
                                 </span>

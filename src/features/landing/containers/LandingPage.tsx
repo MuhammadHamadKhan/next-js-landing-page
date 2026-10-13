@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollDirectionProvider } from "@/features/landing/components/Reveal/ScrollDirectionProvider";
 import { LandingHeader } from "@/features/landing/components/LandingHeader/LandingHeader";
 import { HeroSection } from "@/features/landing/components/HeroSection/HeroSection";
 import { TrustBar } from "@/features/landing/components/TrustBar/TrustBar";
@@ -12,7 +13,7 @@ import { LandingFooter } from "../components/LandingFooter/LandingFooter";
 
 export const LandingPage = () => {
   return (
-    <>
+    <ScrollDirectionProvider>
       <LandingHeader />
       <main>
         <HeroSection />
@@ -24,6 +25,6 @@ export const LandingPage = () => {
         <FinalCTASection />
       </main>
       <LandingFooter />
-    </>
+    </ScrollDirectionProvider>
   );
 };

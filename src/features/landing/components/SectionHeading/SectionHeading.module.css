@@ -1,8 +1,11 @@
-.heading {
+.row {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: clamp(10px, 2vw, 18px);
+}
+
+.heading {
     text-align: center;
     font-weight: 600;
     font-size: clamp(0.9rem, 0.85rem + 0.3vw, 1.1rem);
@@ -11,13 +14,27 @@
     color: #1f2937;
 }
 
-/* The two short lines on each side are drawn with CSS, so they are not part of the page text */
-.heading::before,
-.heading::after {
-    content: "";
+/* The two short lines on each side are decorative, so they are not part of the page text */
+.line {
     flex: 0 0 clamp(24px, 5vw, 48px);
     height: 2px;
     border-radius: 2px;
     background: var(--color-blue, #2563eb);
     opacity: 0.55;
+    transform-origin: center;
+}
+
+/* No scroll animation on phones (see useStaticMotion), and none for visitors
+   who ask for reduced motion. The !important rules are a safety net so the
+   heading is never left hidden or collapsed while the page is hydrating. */
+@media (prefers-reduced-motion: reduce),
+    (max-width: 767px) {
+    .line {
+        transform: scaleX(1) !important;
+    }
+
+    .heading {
+        opacity: 1 !important;
+        transform: none !important;
+    }
 }
