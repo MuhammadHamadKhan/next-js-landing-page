@@ -165,6 +165,22 @@
     transform: scale(1.05);
 }
 
+/* ---------- Phones: plain swipe row that stops on the last card (no looping) ---------- */
+@media (max-width: 767px) {
+    /* Only the first pass of the repeated themes is shown, so the row ends at the last card */
+    .card:not([data-copy="0"]) {
+        display: none;
+    }
+
+    .track {
+        cursor: auto;
+    }
+
+    .track:active {
+        cursor: auto;
+    }
+}
+
 /* ---------- Tablets: 3 cards visible, arrows appear ---------- */
 @media (min-width: 640px) {
     .card {

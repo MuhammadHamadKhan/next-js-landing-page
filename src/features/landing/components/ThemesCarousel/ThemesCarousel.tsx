@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties, MouseEvent } from "react";
 import { SectionHeading } from "@/features/landing/components/SectionHeading/SectionHeading";
 import styles from "./ThemesCarousel.module.css";
@@ -26,6 +26,27 @@ const THEMES: Theme[] = [
 const COPIES = 5;
 const MIDDLE_COPY_INDEX = 2;
 
+/* Same "phone" breakpoint the rest of the landing page uses */
+const MOBILE_QUERY = "(max-width: 767px)";
+
+const subscribeToMobile = (onChange: () => void) => {
+    const query = window.matchMedia(MOBILE_QUERY);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+};
+
+const getMobileSnapshot = () => window.matchMedia(MOBILE_QUERY).matches;
+
+/* No viewport on the server, so start as desktop and let the client correct it */
+const getMobileServerSnapshot = () => false;
+
+/**
+ * Phones get a plain swipe row: one single pass of the themes, no looping.
+ * Tablets and desktops keep the 5-copy infinite loop with arrows.
+ */
+const useIsMobile = () =>
+    useSyncExternalStore(subscribeToMobile, getMobileSnapshot, getMobileServerSnapshot);
+
 const ChevronIcon = ({ direction }: { direction: "left" | "right" }) => (
     <svg
         viewBox="0 0 24 24"
@@ -47,21 +68,29 @@ export const ThemesCarousel = () => {
     const [step, setStep] = useState<number>(0);
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [isReady, setIsReady] = useState<boolean>(false);
+    const isMobile = useIsMobile();
 
-    const isInitializedRef = useRef<boolean>(false);
     const isMouseDownRef = useRef<boolean>(false);
     const startXRef = useRef<number>(0);
     const startScrollLeftRef = useRef<number>(0);
     const isDraggingRef = useRef<boolean>(false);
 
-    // 5 repeated copies of the themes for continuous infinite looping
-    const infiniteThemes = useMemo(() => {
-        const list: { key: string; theme: Theme }[] = [];
+    /**
+     * 5 repeated copies of the themes for continuous infinite looping on tablet and
+     * desktop. On phones only copy 0 is shown (see `.card[data-copy]` in the CSS), so
+     * the row is a plain swipe list that stops on the last card.
+     *
+     * All copies are always rendered so server and client markup stay identical;
+     * hiding is pure CSS, which also means no layout jump when rotating the phone.
+     */
+    const repeatedThemes = useMemo(() => {
+        const list: { key: string; theme: Theme; copy: number }[] = [];
         for (let copy = 0; copy < COPIES; copy++) {
             for (let i = 0; i < THEMES.length; i++) {
                 list.push({
                     key: `${THEMES[i].id}-${copy}-${i}`,
                     theme: THEMES[i],
+                    copy,
                 });
             }
         }
@@ -86,18 +115,23 @@ export const ThemesCarousel = () => {
         measureStep();
     }, [measureStep]);
 
-    // Initialize track position to middle copy on load
-    useEffect(() => {
+    // Position the track: middle copy on desktop, start of the single pass on mobile
+    const positionTrack = useCallback(() => {
         const track = trackRef.current;
         if (!track) return;
 
         const measuredStep = measureStep();
-        if (measuredStep > 0 && !isInitializedRef.current) {
-            isInitializedRef.current = true;
-            const copyWidth = THEMES.length * measuredStep;
-            track.scrollLeft = copyWidth * MIDDLE_COPY_INDEX;
-            setIsReady(true);
-        }
+        if (measuredStep <= 0) return;
+
+        track.scrollLeft = isMobile ? 0 : THEMES.length * measuredStep * MIDDLE_COPY_INDEX;
+        setIsReady(true);
+    }, [isMobile, measureStep]);
+
+    useEffect(() => {
+        const track = trackRef.current;
+        if (!track) return;
+
+        positionTrack();
 
         const observer = new ResizeObserver(() => {
             measureStep();
@@ -105,7 +139,7 @@ export const ThemesCarousel = () => {
         observer.observe(track);
 
         return () => observer.disconnect();
-    }, [measureStep]);
+    }, [measureStep, positionTrack]);
 
     // Handle scroll for infinite looping and active dot update
     const handleScroll = useCallback(() => {
@@ -113,6 +147,13 @@ export const ThemesCarousel = () => {
         if (!track || step <= 0) return;
 
         const copyWidth = THEMES.length * step;
+
+        if (isMobile) {
+            // No looping on phones: the row simply stops at the last card
+            const currentCardIndex = Math.round(track.scrollLeft / step);
+            setActiveIndex(Math.min(Math.max(currentCardIndex, 0), THEMES.length - 1));
+            return;
+        }
 
         // If user scrolls past copy 3.5, wrap silently back to copy 2
         if (track.scrollLeft >= copyWidth * 3.5) {
@@ -126,38 +167,47 @@ export const ThemesCarousel = () => {
         const currentCardIndex = Math.round(track.scrollLeft / step);
         const currentThemeIndex = ((currentCardIndex % THEMES.length) + THEMES.length) % THEMES.length;
         setActiveIndex(currentThemeIndex);
-    }, [step]);
+    }, [isMobile, step]);
 
     // Button Next
     const handleNext = useCallback(() => {
         const track = trackRef.current;
         if (!track || step <= 0) return;
 
-        const copyWidth = THEMES.length * step;
-        if (track.scrollLeft >= copyWidth * 3) {
-            track.scrollLeft -= copyWidth;
+        if (!isMobile) {
+            const copyWidth = THEMES.length * step;
+            if (track.scrollLeft >= copyWidth * 3) {
+                track.scrollLeft -= copyWidth;
+            }
         }
 
         track.scrollBy({ left: step, behavior: "smooth" });
-    }, [step]);
+    }, [isMobile, step]);
 
     // Button Prev
     const handlePrev = useCallback(() => {
         const track = trackRef.current;
         if (!track || step <= 0) return;
 
-        const copyWidth = THEMES.length * step;
-        if (track.scrollLeft <= copyWidth * 1.5) {
-            track.scrollLeft += copyWidth;
+        if (!isMobile) {
+            const copyWidth = THEMES.length * step;
+            if (track.scrollLeft <= copyWidth * 1.5) {
+                track.scrollLeft += copyWidth;
+            }
         }
 
         track.scrollBy({ left: -step, behavior: "smooth" });
-    }, [step]);
+    }, [isMobile, step]);
 
     // Click on a dot
     const goToTheme = (targetIndex: number) => {
         const track = trackRef.current;
         if (!track || step <= 0) return;
+
+        if (isMobile) {
+            track.scrollTo({ left: targetIndex * step, behavior: "smooth" });
+            return;
+        }
 
         const currentCardIndex = Math.round(track.scrollLeft / step);
         const currentThemeIndex = ((currentCardIndex % THEMES.length) + THEMES.length) % THEMES.length;
@@ -231,10 +281,12 @@ export const ThemesCarousel = () => {
                         if (e.key === "ArrowRight") handleNext();
                     }}
                 >
-                    {infiniteThemes.map(({ key, theme }) => (
+                    {repeatedThemes.map(({ key, theme, copy }) => (
                         <li
                             key={key}
                             className={styles.card}
+                            data-copy={copy}
+                            aria-hidden={isMobile && copy > 0 ? true : undefined}
                             style={{ "--from": theme.from, "--to": theme.to } as CSSProperties}
                         >
                             {theme.image ? (

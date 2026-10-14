@@ -51,7 +51,10 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 100px;
+  min-width: 0;
+  /* Fits its grid track (clamp(80px, 30%, 130px)) so it never overlaps the text */
+  width: 100%;
+  max-width: 100px;
   aspect-ratio: 1;
 }
 
@@ -67,7 +70,7 @@
 
 @media (min-width: 1024px) {
   .media {
-    width: 120px;
+    max-width: 120px;
   }
 }
 
@@ -77,6 +80,7 @@
 
 .head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   margin-bottom: 6px;
@@ -99,6 +103,7 @@
   font-size: clamp(0.9rem, 1.4vw, 1rem);
   font-weight: 700;
   color: var(--color-text);
+  overflow-wrap: anywhere;
 }
 
 .text {
